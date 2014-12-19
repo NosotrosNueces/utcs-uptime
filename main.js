@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+/*
+ * main.js executes 'ssh <username>@<server> w' for all servers given.
+ * Command line args:
+ *  ./main.js <USERNAME> <SERVERS_FILE>
+ * SERVERS_FILE is a simple newline-delimited textfile of all the servers.
+ *
+ * NOTE: Assumes all servers use port 22 for SSH.
+ */
+
+var sys  = require('sys');
+var fs   = require('fs');
+var who  = require('./who');
+
+//////////
+// Main //
+//////////
+var args = process.argv.slice(2);
+
+if (args.length !== 2) {
+  // How do I error?
+  throw 'Usage: ./main.js <USERNAME> <SERVERS_FILE>';
+}
+
+fs.readFile(args[1], 'utf-8', function (err, data) {
+  if (err) {
+    throw err;
+  }
+
+  // All the servers!!
+  data.split('\n').map(function (server) {
+    who.ssh(args[0], server, function (w) {
+      // This takes the w object and prints the users from each machine
+      if (w.length > 0) {
+        sys.puts(
+          server + ': ' +
+          w.map(function (obj) {
+            return obj.USER;
+          }).join()
+        );
+      }
+    });
+  });
+});
