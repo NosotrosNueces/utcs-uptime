@@ -13,15 +13,16 @@
     "url": "https://github.com/NosotrosNueces/utcs-uptime/issues"
   },
   "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "mongodb": "~2.0"
+  },
   "devDependencies": {
     "mocha": "^2.0.1",
-    "should": "^4.4.1"
+    "should": "^4.4.1",
+    "node-mongo-seeds": "^2.2.1"
   },
   "preferGlobal": true,
   "private": true,
-  "publishConfig": {},
-  "subdomain": "foobar",
   "analyze": true,
   "license": "MIT"
 }
