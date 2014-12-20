@@ -11,6 +11,8 @@
 var sys  = require('sys');
 var fs   = require('fs');
 var who  = require('./who');
+var uptime  = require('./uptime');
+var assert  = require('assert');
 
 //////////
 // Main //
@@ -23,9 +25,7 @@ if (args.length !== 2) {
 }
 
 fs.readFile(args[1], 'utf-8', function (err, data) {
-  if (err) {
-    throw err;
-  }
+  assert.equal(null, err);
 
   // All the servers!!
   data.split('\n').map(function (server) {
@@ -39,6 +39,8 @@ fs.readFile(args[1], 'utf-8', function (err, data) {
           }).join()
         );
       }
+      // This updates the database records for the servers
+      // uptime.update(server, w);
     });
   });
 });
