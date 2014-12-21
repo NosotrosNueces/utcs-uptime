@@ -39,8 +39,6 @@ fs.readFile(args[1], 'utf-8', function (err, data) {
           }).join()
         );
       }
-      // This updates the database records for the servers
-      // uptime.update(server, w);
     });
   });
 });

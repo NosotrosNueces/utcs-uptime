@@ -7,7 +7,7 @@ var url = 'mongodb://localhost:27017/utcs-uptime';
  * TODO: Store into the session collection based on the difference
  *       between old and current data.
  */
-function update (server, w) {
+function update (server, w, callback) {
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
     console.log('Updating ' + server);
@@ -32,6 +32,7 @@ function update (server, w) {
       function (err, result) {
         assert.equal(err, null);
         db.close();
+        callback();
       });
   });
 }
