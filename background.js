@@ -1,6 +1,7 @@
+#!/usr/bin/env node
 /*
  * background.js executes 'ssh <username>@<server> w' for all servers given
- * every 5 minutes and updates the database with the results.
+ * every 2 minutes and updates the database with the results.
  * Command line args:
  *  ./background.js <USERNAME> <SERVERS_FILE>
  * SERVERS_FILE is a simple newline-delimited textfile of all the servers.
@@ -17,8 +18,7 @@ var assert  = require('assert');
 
 var args = process.argv.slice(2);
 if (args.length !== 2) {
-  // How do I error?
-  throw 'Usage: ./background.js <USERNAME> <SERVERS_FILE>';
+  throw new Error('Usage: ./background.js <USERNAME> <SERVERS_FILE>');
 }
 
 var agenda = new Agenda({db: { address: 'localhost:27017/utcs-uptime'}});
@@ -37,7 +37,7 @@ fs.readFile(args[1], 'utf-8', function (err, data) {
         uptime.update(server, w, done);
       });
     });
-    agenda.every('5 minutes', server);
+    agenda.every('2 minutes', server);
   });
 });
 
