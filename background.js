@@ -37,7 +37,7 @@ fs.readFile(args[1], 'utf-8', function (err, data) {
         uptime.update(server, w, done);
       });
     });
-    agenda.every('5 minutes', server);
+    agenda.every('2 minutes', server);
   });
 });
 
