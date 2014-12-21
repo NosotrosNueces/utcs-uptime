@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1.
+    UT CS Deadly Sins
+  each server in servers
+    div.panel.panel-primary
+      div.panel-heading= server.hostname
+      div.panel-body
+        ul.list-group
+          each user in server.users
+            li.list-group-item= user.name
