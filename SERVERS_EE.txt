@@ -1,0 +1,4 @@
+yoshi.ece.utexas.edu
+bowser.ece.utexas.edu
+mario.ece.utexas.edu
+daisy.ece.utexas.edu
