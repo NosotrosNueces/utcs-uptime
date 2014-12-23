@@ -21,7 +21,7 @@ function read (stdout) {
 // Runs callback on the array from running w on each server
 function ssh (username, server, callback) {
   if (!(username && server)) {
-    return '';
+    throw new Error('Invalid ssh operands');
   }
   // Build and exec a command if we have the stuff
   exec('ssh ' + username + '@' + server + ' w',

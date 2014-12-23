@@ -18,8 +18,7 @@ var who  = require('./who');
 var args = process.argv.slice(2);
 
 if (args.length !== 2) {
-  // How do I error?
-  throw 'Usage: ./main.js <USERNAME> <SERVERS_FILE>';
+  throw new Error('Usage: ./main.js <USERNAME> <SERVERS_FILE>');
 }
 
 fs.readFile(args[1], 'utf-8', function (err, data) {
@@ -28,7 +27,7 @@ fs.readFile(args[1], 'utf-8', function (err, data) {
   }
 
   // All the servers!!
-  data.split('\n').map(function (server) {
+  data.split('\n').slice(0,-1).map(function (server) {
     who.ssh(args[0], server, function (w) {
       // This takes the w object and prints the users from each machine
       if (w.length > 0) {
