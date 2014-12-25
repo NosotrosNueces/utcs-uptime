@@ -1,6 +1,7 @@
+#!/usr/bin/env node
 /*
  * background.js executes 'ssh <username>@<server> w' for all servers given
- * every 5 minutes and updates the database with the results.
+ * every 2 minutes and updates the database with the results.
  * Command line args:
  *  ./background.js <USERNAME> <SERVERS_FILE>
  * SERVERS_FILE is a simple newline-delimited textfile of all the servers.
