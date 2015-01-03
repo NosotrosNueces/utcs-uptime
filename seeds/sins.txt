@@ -1,0 +1,7 @@
+envy.cs.utexas.edu
+gluttony.cs.utexas.edu
+greed.cs.utexas.edu
+lust.cs.utexas.edu
+pride.cs.utexas.edu
+sloth.cs.utexas.edu
+wrath.cs.utexas.edu
