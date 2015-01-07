@@ -1,50 +1,89 @@
 [
   {
     "hostname": "envy.cs.utexas.edu",
-    "physical": false,
-    "user-count": 0,
-    "users": []
+    "physical": true,
+    "userCount": 1,
+    "users": [
+      {
+        "name": "bstiller",
+        "tty": ":0"
+      }
+    ]
   },
 
   {
     "hostname": "gluttony.cs.utexas.edu",
     "physical": false,
-    "user-count": 0,
-    "users": []
+    "userCount": 5,
+    "users": [
+      {
+        "name": "dairy",
+        "tty": "pts/1"
+      },
+      {
+        "name": "fruits",
+        "tty": "pts/3"
+      },
+      {
+        "name": "grains",
+        "tty": "pts/2"
+      },
+      {
+        "name": "meat",
+        "tty": "pts/4"
+      },
+      {
+        "name": "confections",
+        "tty": "pts/5"
+      }
+    ]
   },
 
   {
     "hostname": "greed.cs.utexas.edu",
     "physical": false,
-    "user-count": 0,
+    "userCount": 0,
     "users": []
   },
 
   {
     "hostname": "lust.cs.utexas.edu",
     "physical": false,
-    "user-count": 0,
+    "userCount": 0,
     "users": []
   },
 
   {
     "hostname": "pride.cs.utexas.edu",
     "physical": false,
-    "user-count": 0,
+    "userCount": 0,
     "users": []
   },
 
   {
     "hostname": "sloth.cs.utexas.edu",
     "physical": false,
-    "user-count": 0,
-    "users": []
+    "userCount": 3,
+    "users": [
+      {
+        "name": "slakoth",
+        "tty": "pts/1"
+      },
+      {
+        "name": "vigoroth",
+        "tty": "pts/2"
+      },
+      {
+        "name": "slaking",
+        "tty": "pts/3"
+      }
+    ]
   },
 
   {
     "hostname": "wrath.cs.utexas.edu",
     "physical": false,
-    "user-count": 0,
+    "userCount": 0,
     "users": []
   }
 ]

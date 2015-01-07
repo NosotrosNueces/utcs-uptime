@@ -5,9 +5,22 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var mongo = require('mongodb')
-  , monk  = require('monk');
-var db = monk('localhost:27017/utcs-uptime');
+// Connect database
+var mongoose = require('./mongoose');
+var connect = function () {
+    var options = { server: { socketOptions: { keepAlive: 1 } } };
+    mongoose.connect('mongodb://localhost/utcs-uptime', options);
+};
+connect();
+
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+mongoose.connection.on('disconnected', connect);
+
+// Load models
+fs.readdirSync(__dirname + '/models').forEach(function (file) {
+  if (~file.indexOf('.js'))
+    require(__dirname + '/models/' + file);
+});
 
 var routes = require('./routes/index');
 var current = require('./routes/current');
@@ -26,11 +39,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(function (req, res, next) {
-  req.db = db;
-  next();
-});
 
 app.use('/', routes);
 app.use('/current', current);
@@ -66,6 +74,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;

@@ -8,17 +8,20 @@ Current holds the last seen state of each host:
 {
   "hostname": "string",
   "physical": "boolean",
-  "user-count": "int",
+  "userCount": "int",
+  "updated": "date",
+  "loadAverage": "float",
   "users": [
     {
       "name": "string",
       "tty": "string",
       "from": "string",
-      "time": "date"
+      "loginTime": "date"
     }
   ]
 }
 ```
+`userCount` should be the length of the users list, which does not include duplicates.
 `physical` could be calculated later by filtering across `users`, but this
 will let us select over it.
 Storing multiple `users` with the same name will be confusing, so we should
@@ -28,13 +31,12 @@ try to keep only the longest running session per user/machine pair.
 Session holds a doc for each recorded user session":
 ```json
 {
-  "username": "string",
-  "servername": "string",
+  "name": "string",
   "hostname": "string",
-  "time": "date",
+  "from": "string",
+  "loginTime": "date",
+  "logoutTime": "date",
   "physical": "boolean"
 }
 ```
-`hostname` is carried over from `user[from]` above; we probably shouldn"t do
-anything with it, but we have access to it.
-As with before, `physical` could be extracted from `hostname`, but having it is nice.
+As with before, `physical` could be extracted from `from`, but having it is nice.
