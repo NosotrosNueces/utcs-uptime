@@ -1,6 +1,6 @@
-var assert = require('assert');
-var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/utcs-uptime';
+var mongoose = require('mongoose'),
+    Current = mongoose.model('Current'),
+    Session = mongoose.model('Session');
 
 /*
  * Creates a new users array
@@ -12,13 +12,13 @@ function nextUsers (oldInfo, newInfo) {
       'name': user.USER,
       'tty':  user.TTY,
       'from': user.FROM,
-      'time': new Date()
+      'loginTime': new Date()
     });
   }
 
   if (oldInfo === undefined) {
     // Everyone is new
-    newInfo.forEach(function (user) {
+    newInfo.users.forEach(function (user) {
       if (!users.some(function (u) { return u.name === user.USER; })) {
         add(user);
       }
@@ -26,13 +26,13 @@ function nextUsers (oldInfo, newInfo) {
   } else {
     // Retain old users that are still here
     oldInfo.users.forEach(function (user) {
-      if (newInfo.some(function (u) { return u.USER === user.name; })) {
+      if (newInfo.users.some(function (u) { return u.USER === user.name; })) {
         users.push(user);
       }
     });
 
     // Introduce a single copy of any next people
-    newInfo.forEach(function (user) {
+    newInfo.users.forEach(function (user) {
       if (!users.some(function (u) { return u.name === user.USER; })) {
         add(user);
       }
@@ -46,19 +46,21 @@ function nextUsers (oldInfo, newInfo) {
  */
 function saveSessions (oldInfo, newInfo) {
   oldInfo.users.forEach(function (user) {
-    if (!newInfo.some(function (u) { return u.USER === user.name; })) {
-      MongoClient.connect(url, function(err, db) {
-        assert.equal(null, err);
-        db.collection('session').insert({
-          'username': user.name,
-          'servername': oldInfo.server,
-          'hostname': user.from,
-          'time': new Date() - user.time,
-          'physical': user.tty === ':0'
-        }, function (err, result) {
-          assert.equal(null, err);
-          db.close();
-        });
+    if (!newInfo.users.some(function (u) { return u.USER === user.name; })) {
+      var session = new Session({
+        'name': user.name,
+        'hostname': oldInfo.hostname,
+        'from': user.from,
+        'loginTime': user.time,
+        'logoutTime': new Date(),
+        'physical': user.tty === ':0'
+      });
+
+      session.save(function(err) {
+        if (err) {
+          // Needs logging
+          return false;
+        }
       });
     }
   });
@@ -69,41 +71,51 @@ function saveSessions (oldInfo, newInfo) {
  * and stores session data for people who left
  */
 function update (server, w, callback) {
-  MongoClient.connect(url, function(err, db) {
-    assert.equal(null, err);
-    console.log('Updating ' + server);
+  console.log('Updating ' + server);
 
-    // Callback for last async call made
-    function finish (err, result) {
-      assert.equal(null, err);
-      db.close();
-      callback();
+  Current.findOne({ 'hostname': server }, function(err, oldInfo) {
+    if (err) {
+      // Needs logging
+      return false;
     }
 
-    var current = db.collection('current');
+    var nextUserInfo = nextUsers(oldInfo, w);
 
-    current.find({ 'hostname': server }).toArray(
-      function(err, result) {
-        assert.equal(null, err);
-        var oldInfo = result[0];
-        var nextUserInfo = nextUsers(oldInfo, w);
+    // Info to be stored in the current collection
+    var nextInfo = {
+      'hostname': server,
+      'userCount': nextUserInfo.length,
+      'physical': w.users.some(function (user) { return user.TTY === ':0'; }),
+      'loadAverage': w.loadAverage,
+      'updated': new Date(),
+      'users': nextUserInfo
+    };
 
-        // Info to be stored in the current collection
-        var nextInfo = {
-          'hostname': server,
-          'user-count': nextUserInfo.length,
-          'physical': w.some(function (user) { return user.TTY === ':0'; }),
-          'users': nextUserInfo
-        };
+    if (oldInfo === undefined) {
+      // Insert if there wasn't already a record
+      var current = new Current(nextInfo);
 
-        if (oldInfo === undefined) {
-          // Insert if there wasn't already a record
-          current.insert(nextInfo, finish);
-        } else {
-          saveSessions(oldInfo, w);
-          current.update({ 'hostname': server }, { $set: nextInfo }, finish);
+      current.save(function(err) {
+        if (err) {
+          // Needs logging
+          return false;
         }
-    });
+        callback();
+      });
+    } else {
+      saveSessions(oldInfo, w);
+      Current.update(
+        { 'hostname': server },
+        { $set: nextInfo },
+        function(err) {
+          if (err) {
+            // Needs logging
+            return false;
+          }
+          callback();
+        }
+      );
+    }
   });
 }
 

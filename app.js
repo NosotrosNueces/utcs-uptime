@@ -4,12 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var config = require('./config.json');
 
 // Connect database
 var mongoose = require('./mongoose');
 var connect = function () {
     var options = { server: { socketOptions: { keepAlive: 1 } } };
-    mongoose.connect('mongodb://localhost/utcs-uptime', options);
+    mongoose.connect(config.database, options);
 };
 connect();
 
