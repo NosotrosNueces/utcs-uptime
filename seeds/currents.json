@@ -78,12 +78,5 @@
         "tty": "pts/3"
       }
     ]
-  },
-
-  {
-    "hostname": "wrath.cs.utexas.edu",
-    "physical": false,
-    "userCount": 0,
-    "users": []
   }
 ]

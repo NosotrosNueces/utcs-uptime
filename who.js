@@ -13,15 +13,16 @@ function read (stdout) {
 
   var users = lines.slice(2, -1).map(
     function (line) {
-    var who = {};
-    line.split(/\s+/).forEach(
-      // Each value is named by its column
-      function(value, index) {
-        who[names[index]] = value;
-      }
-    );
-    return who;
-  });
+      var who = {};
+      line.split(/\s+/).forEach(
+        // Each value is named by its column
+        function(value, index) {
+          who[names[index]] = value;
+        }
+      );
+      return who;
+    }
+  );
 
   return { 'users': users, 'loadAverage': load };
 }
@@ -32,10 +33,11 @@ function ssh (username, server, callback) {
     throw new Error('Invalid ssh operands');
   }
   // Build and exec a command if we have the stuff
-  exec('ssh ' + username + '@' + server + ' w -s',
-       function (error, stdout, stderr) {
-         if (error) {
-           // Needs logging
+  exec('ssh ' + username + '@' + server + ' w',
+       function (err, stdout, stderr) {
+         if (err) {
+           console.log(err);
+           console.log(stderr);
            return false;
          }
          callback(read(stdout));

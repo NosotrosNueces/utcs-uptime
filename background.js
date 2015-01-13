@@ -18,7 +18,7 @@ fs.readFile(config.serversFile, 'utf-8', function (err, data) {
       return;
     }
 
-    agenda.define(server, function(job, done) {
+    agenda.define(server, function (job, done) {
       who.ssh(config.username, server, function (w) {
         // This updates the database records for the servers
         uptime.update(server, w, done);
@@ -30,3 +30,5 @@ fs.readFile(config.serversFile, 'utf-8', function (err, data) {
 });
 
 agenda.start();
+
+module.exports = agenda;

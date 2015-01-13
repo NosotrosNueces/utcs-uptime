@@ -1,12 +1,12 @@
 var mongoose = require('mongoose');
 
 var sessionSchema = mongoose.Schema({
-  name: {type: String, default: '', trim: true},
-  hostname: {type: String, default: '', trim: true},
-  from: {type: String, default: '', trim: true},
+  name: {type: String, trim: true},
+  hostname: {type: String, trim: true},
+  from: {type: String, trim: true},
   loginTime: {type: Date},
-  logoutTime: {type: Date, default: Date.now},
-  physical: {type: Boolean, default: false}
+  logoutTime: {type: Date},
+  physical: {type: Boolean}
 });
 
-mongoose.model('Session', sessionSchema);
+var Session = mongoose.model('Session', sessionSchema);

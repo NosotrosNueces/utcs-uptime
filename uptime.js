@@ -16,7 +16,7 @@ function nextUsers (oldInfo, newInfo) {
     });
   }
 
-  if (oldInfo === undefined) {
+  if (!oldInfo) {
     // Everyone is new
     newInfo.users.forEach(function (user) {
       if (!users.some(function (u) { return u.name === user.USER; })) {
@@ -45,20 +45,25 @@ function nextUsers (oldInfo, newInfo) {
  * Store sessions for people who left
  */
 function saveSessions (oldInfo, newInfo) {
+  if (!oldInfo) {
+    // First time to check this machine
+    return;
+  }
+
   oldInfo.users.forEach(function (user) {
     if (!newInfo.users.some(function (u) { return u.USER === user.name; })) {
       var session = new Session({
         'name': user.name,
         'hostname': oldInfo.hostname,
         'from': user.from,
-        'loginTime': user.time,
+        'loginTime': user.loginTime,
         'logoutTime': new Date(),
         'physical': user.tty === ':0'
       });
 
       session.save(function(err) {
         if (err) {
-          // Needs logging
+          console.log(err);
           return false;
         }
       });
@@ -75,7 +80,7 @@ function update (server, w, callback) {
 
   Current.findOne({ 'hostname': server }, function(err, oldInfo) {
     if (err) {
-      // Needs logging
+      console.log(err);
       return false;
     }
 
@@ -91,25 +96,26 @@ function update (server, w, callback) {
       'users': nextUserInfo
     };
 
-    if (oldInfo === undefined) {
+    if (!oldInfo) {
       // Insert if there wasn't already a record
       var current = new Current(nextInfo);
 
       current.save(function(err) {
         if (err) {
-          // Needs logging
+          console.log(err);
           return false;
         }
         callback();
       });
     } else {
       saveSessions(oldInfo, w);
+
       Current.update(
         { 'hostname': server },
         { $set: nextInfo },
         function(err) {
           if (err) {
-            // Needs logging
+            console.log(err);
             return false;
           }
           callback();

@@ -1,5 +1,5 @@
 {
-  'serversFile': 'seeds/sins.txt',
-  'username': 'NAME',
-  'database': 'mongodb://localhost/utcs-uptime'
+  "serversFile": "seeds/sins.txt",
+  "username": "NAME",
+  "database": "mongodb://localhost/utcs-uptime"
 }

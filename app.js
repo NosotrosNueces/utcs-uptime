@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var config = require('./config.json');
 
 // Connect database
-var mongoose = require('./mongoose');
+var mongoose = require('mongoose');
 var connect = function () {
     var options = { server: { socketOptions: { keepAlive: 1 } } };
     mongoose.connect(config.database, options);
@@ -18,10 +18,14 @@ mongoose.connection.on('error', console.error.bind(console, 'connection error:')
 mongoose.connection.on('disconnected', connect);
 
 // Load models
+var fs = require('fs');
 fs.readdirSync(__dirname + '/models').forEach(function (file) {
   if (~file.indexOf('.js'))
     require(__dirname + '/models/' + file);
 });
+
+// Start the Agenda jobs
+var agenda = require('./background');
 
 var routes = require('./routes/index');
 var current = require('./routes/current');

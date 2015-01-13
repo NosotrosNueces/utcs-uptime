@@ -1,17 +1,17 @@
 var mongoose = require('mongoose');
 
 var currentSchema = mongoose.Schema({
-  hostname: {type: String, default: '', trim: true},
-  physical: {type: Boolean, default: false},
-  userCount: {type: Number, default: 0},
-  updated: {type: Date, default: Date.now},
-  loadAverage: {type: Number, default: 0},
+  hostname: {type: String, trim: true},
+  physical: {type: Boolean},
+  userCount: {type: Number},
+  updated: {type: Date},
+  loadAverage: {type: Number},
   users: [{
-    name: {type: String, default: '', trim: true},
-    tty: {type: String, default: '', trim: true},
-    from: {type: String, default: '', trim: true},
+    name: {type: String, trim: true},
+    tty: {type: String, trim: true},
+    from: {type: String, trim: true},
     loginTime: {type: Date}
   }]
 });
 
-mongoose.model('Current', currentSchema);
+var Mongoose = mongoose.model('Current', currentSchema);

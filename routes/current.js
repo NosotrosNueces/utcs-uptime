@@ -18,10 +18,9 @@ router.route('/')
   });
 
 // Serves record for a given hostname
-// This should only ever return one
 router.route('/:server')
   .get(function(req, res) {
-    Current.find(
+    Current.findOne(
       { 'hostname': req.params.server },
       function (err, result) {
         if (err) {
