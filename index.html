@@ -12,7 +12,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
     <script src="javascripts/controller.js"></script>
     <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
   </head>
   <body ng-controller="CurrentListController">
@@ -26,8 +26,24 @@
           <div class="panel panel-default" >
             <div class="panel-heading">{{ current.hostname }}</div>
             <div class="panel-body">
-              Current users: {{ userList }}
+              Last observed at {{ current.updated  | date : 'h:mm:ss' }}
+              with load average {{ current.loadAverage }}.
             </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Logged In</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="user in current.users">
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.loginTime | date : 'MMM d, h:mm' }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </header>
@@ -36,8 +52,8 @@
           <ul class="list-group">
             <li
               class="list-group-item"
-              ng-repeat="server in servers">
-                <span class="badge">{{ server["user-count"] }}</span>
+              ng-repeat="server in servers | filter : hasPeople">
+                <span class="badge">{{ server["userCount"] }}</span>
                 <a href ng-click="click(server)">{{ server.hostname }}</a>
             </li>
           </ul>
