@@ -1,29 +1,15 @@
-#!/usr/bin/env node
-/*
- * background.js executes 'ssh <username>@<server> w' for all servers given
- * every 2 minutes and updates the database with the results.
- * Command line args:
- *  ./background.js <USERNAME> <SERVERS_FILE>
- * SERVERS_FILE is a simple newline-delimited textfile of all the servers.
- *
- * NOTE: Assumes all servers use port 22 for SSH.
- */
-
 var Agenda = require('agenda');
 var sys  = require('sys');
 var fs   = require('fs');
 var who  = require('./who');
-var uptime  = require('./uptime');
-var assert  = require('assert');
+var uptime = require('./uptime');
+var assert = require('assert');
+var config = require('./config.json');
 
-var args = process.argv.slice(2);
-if (args.length !== 2) {
-  throw new Error('Usage: ./background.js <USERNAME> <SERVERS_FILE>');
-}
+var agenda = new Agenda({db: { address: config.database }});
 
-var agenda = new Agenda({db: { address: 'localhost:27017/utcs-uptime'}});
-
-fs.readFile(args[1], 'utf-8', function (err, data) {
+// Reads through the serversFile and adds a job for each server
+fs.readFile(config.serversFile, 'utf-8', function (err, data) {
   assert.equal(null, err);
 
   // All the servers!!
@@ -31,14 +17,18 @@ fs.readFile(args[1], 'utf-8', function (err, data) {
     if (!server) {
       return;
     }
-    agenda.define(server, function(job, done) {
-      who.ssh(args[0], server, function (w) {
+
+    agenda.define(server, function (job, done) {
+      who.ssh(config.username, server, function (w) {
         // This updates the database records for the servers
         uptime.update(server, w, done);
       });
     });
+
     agenda.every('2 minutes', server);
   });
 });
 
 agenda.start();
+
+module.exports = agenda;

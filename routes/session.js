@@ -1,11 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
+var mongoose = require('mongoose'),
+    Session = mongoose.model('Session');
+
 // Serves every stored session
 // probably don't want to do this
 router.route('/')
   .get(function(req, res) {
-    req.db.get('session').find({}, {},
+    Session.find({},
       function (err, result) {
         if (err) {
           res.send(err);
@@ -18,8 +21,8 @@ router.route('/')
 // Serves sessions for a given hostname
 router.route('/server/:server')
   .get(function(req, res) {
-    req.db.get('session').find(
-      { 'servername': req.params.server }, {},
+    Session.find(
+      { 'hostname': req.params.server },
       function (err, result) {
         if (err) {
           res.send(err);
@@ -32,8 +35,8 @@ router.route('/server/:server')
 // Serves sessions for a given username
 router.route('/user/:user')
   .get(function(req, res) {
-    req.db.get('session').find(
-      { 'username': req.params.user }, {},
+    Session.find(
+      { 'name': req.params.user },
       function (err, result) {
         if (err) {
           res.send(err);

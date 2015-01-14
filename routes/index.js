@@ -1,11 +1,17 @@
 var express = require('express');
 var router = express.Router();
 
+var mongoose = require('mongoose'),
+    Current = mongoose.model('Current');
+
 /* GET home page. */
 router.get('/', function(req, res) {
-  var current = req.db.get('current');
-  current.find({}, {}, function (e, result) {
-    res.render('index', { 'servers': result });
+  Current.find(function (err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.render('index', { 'servers': result });
+    }
   });
 });
 

@@ -1,10 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
+var mongoose = require('mongoose'),
+    Current = mongoose.model('Current');
+
 // Serves every current record
 router.route('/')
   .get(function(req, res) {
-    req.db.get('current').find({}, {},
+    Current.find({},
       function (err, result) {
         if (err) {
           res.send(err);
@@ -15,11 +18,10 @@ router.route('/')
   });
 
 // Serves record for a given hostname
-// This should only ever return one
 router.route('/:server')
   .get(function(req, res) {
-    req.db.get('current').find(
-      { 'hostname': req.params.server }, {},
+    Current.findOne(
+      { 'hostname': req.params.server },
       function (err, result) {
         if (err) {
           res.send(err);
