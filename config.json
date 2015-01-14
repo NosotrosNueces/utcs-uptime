@@ -1,5 +1,5 @@
 {
   "serversFile": "seeds/sins.txt",
-  "username": "NAME",
+  "username": "jme2347",
   "database": "mongodb://localhost/utcs-uptime"
 }

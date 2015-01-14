@@ -6,7 +6,13 @@ var uptime = require('./uptime');
 var assert = require('assert');
 var config = require('./config.json');
 
-var agenda = new Agenda({db: { address: config.database }});
+var agenda = new Agenda({
+  defaultConcurrency: 10,
+  db: { address: config.database }
+});
+
+// Unlimit EventEmitters
+process.setMaxListeners(0);
 
 // Reads through the serversFile and adds a job for each server
 fs.readFile(config.serversFile, 'utf-8', function (err, data) {
@@ -21,11 +27,15 @@ fs.readFile(config.serversFile, 'utf-8', function (err, data) {
     agenda.define(server, function (job, done) {
       who.ssh(config.username, server, function (w) {
         // This updates the database records for the servers
-        uptime.update(server, w, done);
+        uptime.update(server, w, function (success) {
+          job.priority(success ? 'high' : 'low');
+          job.save();
+          done();
+        });
       });
     });
 
-    agenda.every('2 minutes', server);
+    agenda.every('4 minutes', server);
   });
 });
 

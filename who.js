@@ -38,7 +38,6 @@ function ssh (username, server, callback) {
          if (err) {
            console.log(err);
            console.log(stderr);
-           return false;
          }
          callback(read(stdout));
        });

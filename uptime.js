@@ -76,11 +76,10 @@ function saveSessions (oldInfo, newInfo) {
  * and stores session data for people who left
  */
 function update (server, w, callback) {
-  console.log('Updating ' + server);
-
   Current.findOne({ 'hostname': server }, function(err, oldInfo) {
     if (err) {
       console.log(err);
+      callback(false);
       return false;
     }
 
@@ -103,9 +102,8 @@ function update (server, w, callback) {
       current.save(function(err) {
         if (err) {
           console.log(err);
-          return false;
         }
-        callback();
+        callback(!err);
       });
     } else {
       saveSessions(oldInfo, w);
@@ -116,9 +114,8 @@ function update (server, w, callback) {
         function(err) {
           if (err) {
             console.log(err);
-            return false;
           }
-          callback();
+          callback(!err);
         }
       );
     }
