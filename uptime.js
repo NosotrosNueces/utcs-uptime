@@ -2,6 +2,42 @@ var mongoose = require('mongoose'),
     Current = mongoose.model('Current'),
     Session = mongoose.model('Session');
 
+function dateFromWTime (wTime) {
+  var time  = /(\d+):(\d+)/,
+      day   = /(\w+)(\d+)/,
+      month = /(\d+)(\D+)(\d+)/;
+
+  var now = new Date();
+  var match;
+  if (time.test(wTime)) {
+    match = time.exec(wTime);
+    return new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      match[1],
+      match[2]);
+  }
+
+  if (day.test(wTime)) {
+    match = day.exec(wTime);
+    return new Date(
+      now.getFullYear(),
+      now.getMonth(), // Possibly not what we want
+      match[1],
+      match[2], 59);
+  }
+
+  if (month.test(wTime)) {
+    match = month.exec(wTime);
+    return new Date(
+      match[3], match[2], match[1], 23, 59);
+  }
+
+  console.log('Unmatched time string: ' + wTime);
+  return now;
+}
+
 /*
  * Creates a new users array
  */
@@ -125,3 +161,7 @@ function update (server, w, callback) {
 module.exports = {
   update: update
 };
+
+if (process.env.NODE_ENV === "test") {
+  module.exports.dateFromWTime = dateFromWTime;
+}

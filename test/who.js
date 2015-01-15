@@ -1,13 +1,13 @@
 var should = require('should');
 var who    = require('../who');
 
-describe('who.js', function() {
-  describe('#read()', function() {
-    it('should return an empty users array on nothing', function(){
+describe('who.js', function () {
+  describe('#read ()', function () {
+    it('should return an empty users array on nothing', function () {
       who.read('').users.should.be.an.Array.and.have.lengthOf(0);
     });
 
-    it('should return an array of w objects as users', function(){
+    it('should return an array of w objects as users', function () {
       // Captured w output for tests
       var result = who.read('\
  13:28:33 up 1 day,  4:32,  1 user,  load average: 0.00, 0.01, 0.05\n\
@@ -19,7 +19,7 @@ name    pts/0    192-168-2-1      13:24    4:13   0.22s  0.22s -zsh\n');
       );
     });
 
-    it('should return the five minute load average', function(){
+    it('should return the five minute load average', function () {
       // Captured w output for tests
       var result = who.read('\
  13:28:33 up 1 day,  4:32,  1 user,  load average: 0.00, 0.01, 0.05\n\
@@ -28,7 +28,7 @@ name    pts/0    192-168-2-1      13:24    4:13   0.22s  0.22s -zsh\n');
       result.should.have.property('loadAverage', '0.01');
     });
 
-    it('should contain everyone from the w output', function(){
+    it('should contain everyone from the w output', function () {
       // Captured w output for tests
       var result = who.read('\
  13:28:33 up 1 day,  4:32,  1 user,  load average: 0.00, 0.01, 0.05\n\
